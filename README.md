@@ -1,55 +1,46 @@
-# Mintlify Starter Kit
+# Senal 做市商 API 文档
 
-Use the starter kit to get your docs deployed and ready to customize.
+Senal 做市商 API 的技术文档，基于 [Mintlify](https://mintlify.com) 构建。
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+## 文档结构
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+```text
+├── index.mdx                    # 简介
+├── quickstart.mdx               # 快速上手
+├── authentication.mdx           # 认证（L1 EIP-712 + L2 HMAC-SHA256）
+├── concepts/                    # 核心概念
+│   ├── order-types.mdx          # 订单类型（GTC/GTD/FOK/FAK）
+│   ├── heartbeat.mdx            # 心跳机制
+│   └── websocket.mdx            # WebSocket 概述
+├── api-reference/               # API 参考
+│   ├── overview.mdx             # API 概览
+│   ├── auth/                    # 认证接口
+│   ├── orders/                  # 订单接口
+│   ├── trades/                  # 成交接口
+│   ├── markets/                 # 市场接口
+│   ├── account/                 # 账户接口
+│   ├── heartbeat/               # 心跳接口
+│   └── websocket/               # WebSocket 频道
+│       ├── overview.mdx         # 连接、认证、订阅
+│       ├── orderbook.mdx        # 订单簿频道
+│       ├── trade.mdx            # 成交频道
+│       ├── orders.mdx           # 订单频道（私有）
+│       └── positions.mdx        # 持仓频道（私有）
+└── docs.json                    # Mintlify 配置
+```
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
-
-## AI-assisted writing
-
-Set up your AI coding tool to work with Mintlify:
+## 本地开发
 
 ```bash
-npx skills add https://mintlify.com/docs
+# 安装 Mintlify CLI
+npm i -g mintlify
+
+# 启动开发服务器
+mintlify dev
 ```
 
-This command installs Mintlify's documentation skill for your configured AI tools like Claude Code, Cursor, Windsurf, and others. The skill includes component reference, writing standards, and workflow guidance.
+访问 `http://localhost:3000` 预览。
 
-See the [AI tools guides](/ai-tools) for tool-specific setup.
+## 部署
 
-## Development
-
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
-
-```
-npm i -g mint
-```
-
-Run the following command at the root of your documentation, where your `docs.json` is located:
-
-```
-mint dev
-```
-
-View your local preview at `http://localhost:3000`.
-
-## Publishing changes
-
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
-
-## Need help?
-
-### Troubleshooting
-
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
-
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+推送到 `main` 分支后自动部署到 Mintlify。
