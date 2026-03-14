@@ -1,52 +1,52 @@
 ---
-title: Introduction
-description: "Senal Market Maker API - Build automated trading strategies on prediction markets"
+title: 简介
+description: "Senal 做市商 API - 在预测市场上构建自动化交易策略"
 ---
 
-# Senal Market Maker API
+# Senal 做市商 API
 
 Senal 做市商 API 为机构交易者提供低延迟、高吞吐的预测市场做市接口。API 设计对齐 [Polymarket CLOB API](https://docs.polymarket.com)，方便已有做市系统快速接入。
 
-## Key Features
+## 核心特性
 
 <CardGroup cols={2}>
-  <Card title="Dual-Layer Auth" icon="shield-halved">
+  <Card title="双层认证" icon="shield-halved">
     L1 EIP-712 钱包签名 + L2 HMAC-SHA256 请求签名，兼顾安全与性能
   </Card>
-  <Card title="Order Types" icon="layer-group">
+  <Card title="订单类型" icon="layer-group">
     支持 GTC、GTD、FOK、FAK 四种订单类型，以及 Post-Only 模式
   </Card>
-  <Card title="Batch Operations" icon="boxes-stacked">
+  <Card title="批量操作" icon="boxes-stacked">
     原子批量下单（最多 15 笔）、批量撤单（最多 3000 笔）
   </Card>
-  <Card title="Real-time WebSocket" icon="bolt">
+  <Card title="实时 WebSocket" icon="bolt">
     订单簿、成交、订单状态、持仓变更实时推送
   </Card>
 </CardGroup>
 
-## Base URL
+## 基础地址
 
 ```
 https://api.senal.market/v1
 ```
 
-## Rate Limits
+## 频率限制
 
-| Endpoint | Limit |
+| 类型 | 限制 |
 |----------|-------|
 | REST API | 100 req/s per API Key |
 | WebSocket | 5 connections per API Key |
 
-## Quick Links
+## 快速导航
 
 <CardGroup cols={3}>
-  <Card title="Quick Start" icon="rocket" href="/quickstart">
+  <Card title="快速上手" icon="rocket" href="/quickstart">
     5 分钟完成首笔下单
   </Card>
-  <Card title="Authentication" icon="key" href="/authentication">
+  <Card title="认证" icon="key" href="/authentication">
     认证流程详解
   </Card>
-  <Card title="API Reference" icon="code" href="/api-reference/overview">
+  <Card title="API 参考" icon="code" href="/api-reference/overview">
     完整接口文档
   </Card>
 </CardGroup>

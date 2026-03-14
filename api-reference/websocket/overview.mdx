@@ -1,0 +1,151 @@
+---
+title: WebSocket 总览
+description: "WebSocket 连接、认证、订阅与连接维护"
+---
+
+## 连接地址
+
+```
+wss://api.senal.market/v1/mm/ws
+```
+
+每个 API Key 最多允许 **5 个并发连接**。
+
+## 认证
+
+建立 WebSocket 连接后，**第一个消息必须是认证包**，否则连接会在短时间内被服务端关闭。
+
+### 认证消息格式
+
+```json
+{
+  "event": "auth",
+  "data": {
+    "apiKey": "your_api_key",
+    "signature": "hmac_signature_hex",
+    "timestamp": "1735689600000",
+    "nonce": "random_nonce_string",
+    "passphrase": "your_passphrase"
+  }
+}
+```
+
+### WS 签名算法
+
+WebSocket 使用独立的签名规则（与 HTTP L2 类似，但 Method 固定为 `"WS"`，path 固定为 `"/v1/mm/ws"`）：
+
+```
+message   = timestamp + nonce + "WS" + "/v1/mm/ws"
+signature = HMAC-SHA256(apiSecret, message)
+```
+
+```typescript
+import { createHmac } from 'crypto';
+
+function signWsAuth(apiSecret: string, timestamp: string, nonce: string): string {
+  const message = timestamp + nonce + 'WS' + '/v1/mm/ws';
+  return createHmac('sha256', apiSecret).update(message).digest('hex');
+}
+
+// 使用
+const timestamp = Date.now().toString();
+const nonce = crypto.randomUUID();
+const signature = signWsAuth(apiSecret, timestamp, nonce);
+
+ws.send(JSON.stringify({
+  event: 'auth',
+  data: { apiKey, signature, timestamp, nonce, passphrase },
+}));
+```
+
+### 认证响应
+
+成功：
+```json
+{
+  "event": "auth",
+  "data": { "status": "ok" }
+}
+```
+
+失败：
+```json
+{
+  "event": "error",
+  "data": { "code": 401, "message": "Invalid signature" }
+}
+```
+
+## 订阅频道
+
+认证成功后，发送订阅消息：
+
+```json
+{
+  "event": "subscribe",
+  "data": {
+    "channels": ["orderbook:0xabc123", "orders"]
+  }
+}
+```
+
+取消订阅：
+
+```json
+{
+  "event": "unsubscribe",
+  "data": {
+    "channels": ["orderbook:0xabc123"]
+  }
+}
+```
+
+## 可用频道
+
+| 频道 | 类型 | 说明 |
+|------|------|------|
+| `orderbook:<tokenId>` | 公开 | 指定 token 的订单簿变化 |
+| `trade:<tokenId>` | 公开 | 指定 token 的成交记录 |
+| `orders` | 私有 | 当前用户的订单状态变化 |
+| `positions` | 私有 | 当前用户的仓位变化 |
+
+<CardGroup cols={2}>
+  <Card title="订单簿频道" icon="book" href="/api-reference/websocket/orderbook">
+    实时订单簿快照
+  </Card>
+  <Card title="成交频道" icon="arrow-right-arrow-left" href="/api-reference/websocket/trade">
+    实时成交记录
+  </Card>
+  <Card title="订单频道" icon="receipt" href="/api-reference/websocket/orders">
+    订单状态变更（私有）
+  </Card>
+  <Card title="持仓频道" icon="wallet" href="/api-reference/websocket/positions">
+    仓位变动（私有）
+  </Card>
+</CardGroup>
+
+## 连接维护
+
+服务端会定期发送 Ping 帧，客户端需回复 Pong 帧（大多数 WebSocket 库自动处理）。
+
+如果连接意外断开，应实现指数退避重连并在重连后重新认证和订阅频道。
+
+```typescript
+function connectWithRetry(delay = 1000) {
+  const ws = new WebSocket('wss://api.senal.market/v1/mm/ws');
+
+  ws.on('open', () => {
+    // 1. 发送认证
+    // 2. 重新订阅之前的频道
+  });
+
+  ws.on('close', () => {
+    const nextDelay = Math.min(delay * 2, 30_000); // 最大 30 秒
+    setTimeout(() => connectWithRetry(nextDelay), delay);
+  });
+}
+```
+
+<Note>
+  WebSocket 连接断开不会触发心跳超时。心跳和 WebSocket 是独立机制，需要分别维护。
+</Note>

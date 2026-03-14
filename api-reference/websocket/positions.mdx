@@ -1,0 +1,58 @@
+---
+title: 持仓频道
+description: "positions — 仓位变动实时推送（私有）"
+---
+
+## 频道信息
+
+| 属性 | 值 |
+|------|---|
+| 频道名 | `positions` |
+| 类型 | 私有（需认证） |
+| 说明 | 推送仓位变化 |
+
+## 订阅
+
+```json
+{
+  "event": "subscribe",
+  "data": {
+    "channels": ["positions"]
+  }
+}
+```
+
+## 消息格式
+
+```json
+{
+  "event": "update",
+  "channel": "positions",
+  "data": {
+    "tokenId": "0xabc123",
+    "size": "150",
+    "avgPrice": "0.6520",
+    "updatedAt": "1735689600000"
+  }
+}
+```
+
+### 字段说明
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `tokenId` | string | Token ID |
+| `size` | string | 持仓数量 |
+| `avgPrice` | string | 平均持仓价格 |
+| `updatedAt` | string | 更新时间戳（毫秒） |
+
+## 取消订阅
+
+```json
+{
+  "event": "unsubscribe",
+  "data": {
+    "channels": ["positions"]
+  }
+}
+```

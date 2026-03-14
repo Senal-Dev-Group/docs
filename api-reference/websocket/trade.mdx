@@ -1,0 +1,62 @@
+---
+title: 成交频道
+description: "trade:<tokenId> — 实时成交记录推送"
+---
+
+## 频道信息
+
+| 属性 | 值 |
+|------|---|
+| 频道名 | `trade:<tokenId>` |
+| 类型 | 公开 |
+| 说明 | 指定市场的实时成交记录 |
+
+## 订阅
+
+```json
+{
+  "event": "subscribe",
+  "data": {
+    "channels": ["trade:0xabc123"]
+  }
+}
+```
+
+## 消息格式
+
+```json
+{
+  "event": "update",
+  "channel": "trade:0xabc123",
+  "data": {
+    "id": "trade_001",
+    "tokenId": "0xabc123",
+    "price": "0.6550",
+    "size": "100",
+    "side": "BUY",
+    "timestamp": "1735689600000"
+  }
+}
+```
+
+### 字段说明
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `id` | string | 成交 ID |
+| `tokenId` | string | Token ID |
+| `price` | string | 成交价格 |
+| `size` | string | 成交数量 |
+| `side` | string | 成交方向：`BUY` 或 `SELL` |
+| `timestamp` | string | 成交时间戳（毫秒） |
+
+## 取消订阅
+
+```json
+{
+  "event": "unsubscribe",
+  "data": {
+    "channels": ["trade:0xabc123"]
+  }
+}
+```

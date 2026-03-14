@@ -1,0 +1,60 @@
+---
+title: 订单频道
+description: "orders — 订单状态变更实时推送（私有）"
+---
+
+## 频道信息
+
+| 属性 | 值 |
+|------|---|
+| 频道名 | `orders` |
+| 类型 | 私有（需认证） |
+| 说明 | 推送当前 API Key 关联用户的订单状态变化 |
+
+## 订阅
+
+```json
+{
+  "event": "subscribe",
+  "data": {
+    "channels": ["orders"]
+  }
+}
+```
+
+## 消息格式
+
+```json
+{
+  "event": "update",
+  "channel": "orders",
+  "data": {
+    "id": "order_001",
+    "status": "PARTIALLY_FILLED",
+    "filledSize": "50",
+    "remainingSize": "50",
+    "updatedAt": "1735689600000"
+  }
+}
+```
+
+### 字段说明
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `id` | string | 订单 ID |
+| `status` | string | 订单状态：`OPEN`、`PARTIALLY_FILLED`、`FILLED`、`CANCELLED` |
+| `filledSize` | string | 已成交数量 |
+| `remainingSize` | string | 剩余未成交数量 |
+| `updatedAt` | string | 更新时间戳（毫秒） |
+
+## 取消订阅
+
+```json
+{
+  "event": "unsubscribe",
+  "data": {
+    "channels": ["orders"]
+  }
+}
+```

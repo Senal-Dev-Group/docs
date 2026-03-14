@@ -1,5 +1,5 @@
 ---
-title: Authentication
+title: 认证
 description: "L1 EIP-712 + L2 HMAC-SHA256 双层认证机制"
 ---
 
@@ -8,11 +8,11 @@ Senal 做市商 API 使用双层认证机制：
 - **L1（钱包层）**：EIP-712 签名，用于身份验证和 API Key 管理
 - **L2（请求层）**：HMAC-SHA256 签名，用于日常交易请求
 
-## L2: HMAC-SHA256 Request Signing
+## L2: HMAC-SHA256 请求签名
 
 大部分 API 请求使用 L2 认证。每个请求需携带 5 个 Headers：
 
-| Header | Type | Description |
+| Header | 类型 | 说明 |
 |--------|------|-------------|
 | `SENAL-API-KEY` | string | API Key |
 | `SENAL-SIGNATURE` | string | HMAC-SHA256 签名（hex） |
@@ -20,7 +20,7 @@ Senal 做市商 API 使用双层认证机制：
 | `SENAL-NONCE` | string | 随机字符串，至少 16 字节 |
 | `SENAL-PASSPHRASE` | string | API Key 关联的 Passphrase |
 
-### Signature Algorithm
+### 签名算法
 
 ```
 1. body_hash  = SHA256(request_body)        // 空 body 用空字符串
@@ -32,13 +32,13 @@ Senal 做市商 API 使用双层认证机制：
   `path` 只包含路径部分，不含 query string。例如 `/v1/mm/orders` 而非 `/v1/mm/orders?page=1`。
 </Note>
 
-### Security Rules
+### 安全规则
 
 - **时间窗口**：timestamp 必须在服务器时间 ±60 秒内
 - **Nonce 防重放**：同一 API Key 的 nonce 在 300 秒内不可重复使用
 - **Passphrase 常量时间比对**：防止时序攻击
 
-## L1: EIP-712 Wallet Signing
+## L1: EIP-712 钱包签名
 
 L1 认证用于以下场景：
 - `POST /mm/auth/api-key` — 创建新 API Key
@@ -46,7 +46,7 @@ L1 认证用于以下场景：
 
 L1 请求使用 EIP-712 Typed Data 签名，Headers：
 
-| Header | Type | Description |
+| Header | 类型 | 说明 |
 |--------|------|-------------|
 | `SENAL-ADDRESS` | string | 钱包地址（checksummed） |
 | `SENAL-SIGNATURE` | string | EIP-712 签名 |
@@ -77,7 +77,7 @@ L1 请求使用 EIP-712 Typed Data 签名，Headers：
 }
 ```
 
-### Message Value
+### 消息值
 
 ```json
 {
@@ -88,7 +88,7 @@ L1 请求使用 EIP-712 Typed Data 签名，Headers：
 }
 ```
 
-### Example: Sign with ethers.js
+### 示例：使用 ethers.js 签名
 
 ```typescript
 import { Wallet } from 'ethers';
@@ -122,7 +122,7 @@ const value = {
 const signature = await wallet.signTypedData(domain, types, value);
 ```
 
-## API Key Lifecycle
+## API Key 生命周期
 
 ```mermaid
 sequenceDiagram

@@ -1,9 +1,9 @@
 ---
-title: API Reference Overview
-description: "Senal 做市商 API 基础信息：Base URL、认证方式、响应格式与错误码"
+title: "API 参考概览"
+description: "Senal 做市商 API 基础信息：基础地址、认证方式、响应格式与错误码"
 ---
 
-## Base URL
+## 基础地址
 
 ```
 https://api.senal.market/v1
@@ -21,7 +21,7 @@ https://api.senal.market/v1
 | `POST /mm/auth/derive-api-key` | L1（EIP-712） |
 | 其余所有端点 | L2（HMAC-SHA256） |
 
-详细认证流程请参阅 [Authentication](/authentication)。
+详细认证流程请参阅 [认证](/authentication)。
 
 ### L2 请求头
 
@@ -109,16 +109,16 @@ HTTP 2xx，Body 直接为数据对象或数组：
 ## 快速导航
 
 <CardGroup cols={2}>
-  <Card title="Authentication" icon="key" href="/authentication">
+  <Card title="认证" icon="key" href="/authentication">
     L1 / L2 认证详解
   </Card>
-  <Card title="Order Types" icon="list" href="/concepts/order-types">
+  <Card title="订单类型" icon="list" href="/concepts/order-types">
     GTC、GTD、FOK、FAK、Post-Only
   </Card>
-  <Card title="Heartbeat" icon="heart" href="/concepts/heartbeat">
+  <Card title="心跳机制" icon="heart" href="/concepts/heartbeat">
     保持挂单活跃
   </Card>
-  <Card title="WebSocket" icon="bolt" href="/concepts/websocket">
+  <Card title="WebSocket" icon="bolt" href="/api-reference/websocket/overview">
     实时数据推送
   </Card>
 </CardGroup>

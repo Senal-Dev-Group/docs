@@ -1,0 +1,68 @@
+---
+title: 订单簿频道
+description: "orderbook:<tokenId> — 实时订单簿快照推送"
+---
+
+## 频道信息
+
+| 属性 | 值 |
+|------|---|
+| 频道名 | `orderbook:<tokenId>` |
+| 类型 | 公开 |
+| 说明 | 实时订单簿快照，每次有订单变化时推送 |
+
+## 订阅
+
+```json
+{
+  "event": "subscribe",
+  "data": {
+    "channels": ["orderbook:0xabc123"]
+  }
+}
+```
+
+## 消息格式
+
+```json
+{
+  "event": "update",
+  "channel": "orderbook:0xabc123",
+  "data": {
+    "tokenId": "0xabc123",
+    "bids": [
+      { "price": "0.6500", "size": "500" },
+      { "price": "0.6400", "size": "1000" }
+    ],
+    "asks": [
+      { "price": "0.6600", "size": "300" },
+      { "price": "0.6700", "size": "800" }
+    ],
+    "timestamp": "1735689600000"
+  }
+}
+```
+
+### 字段说明
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `tokenId` | string | Token ID |
+| `bids` | array | 买单列表，按价格降序 |
+| `bids[].price` | string | 买入价格 |
+| `bids[].size` | string | 买入数量 |
+| `asks` | array | 卖单列表，按价格升序 |
+| `asks[].price` | string | 卖出价格 |
+| `asks[].size` | string | 卖出数量 |
+| `timestamp` | string | 快照时间戳（毫秒） |
+
+## 取消订阅
+
+```json
+{
+  "event": "unsubscribe",
+  "data": {
+    "channels": ["orderbook:0xabc123"]
+  }
+}
+```

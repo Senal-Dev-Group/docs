@@ -1,14 +1,14 @@
 ---
-title: Quick Start
+title: 快速上手
 description: "5 分钟完成做市商 API 接入"
 ---
 
-## Prerequisites
+## 前置条件
 
 1. 联系 Senal 团队注册做市商机构（提供钱包地址和 Safe 多签地址）
 2. 获取 API Key 三元组：`apiKey`、`apiSecret`、`passphrase`
 
-## Step 1: Install SDK
+## 第一步：安装依赖
 
 <CodeGroup>
 ```bash npm
@@ -20,11 +20,11 @@ pip install requests hmac hashlib
 ```
 </CodeGroup>
 
-## Step 2: Build Request Signature
+## 第二步：构建请求签名
 
 每个 REST 请求需携带以下 Headers：
 
-| Header | Description |
+| Header | 说明 |
 |--------|-------------|
 | `SENAL-API-KEY` | 你的 API Key |
 | `SENAL-SIGNATURE` | HMAC-SHA256 签名 |
@@ -94,7 +94,7 @@ def build_headers(api_key, api_secret, passphrase, method, path, body=""):
 ```
 </CodeGroup>
 
-## Step 3: Place Your First Order
+## 第三步：提交首笔订单
 
 <CodeGroup>
 ```typescript TypeScript
@@ -152,7 +152,7 @@ place_order()
 ```
 </CodeGroup>
 
-## Step 4: Start Heartbeat
+## 第四步：启动心跳
 
 做市期间需每 10 秒发送一次心跳，超过 15 秒未收到心跳将自动撤销所有挂单。
 
@@ -164,8 +164,8 @@ setInterval(async () => {
 }, 10_000);
 ```
 
-## Next Steps
+## 下一步
 
-- [Authentication](/authentication) - 了解 L1/L2 双层认证机制
-- [Order Types](/concepts/order-types) - GTC、FOK、FAK、Post-Only 详解
+- [认证](/authentication) - 了解 L1/L2 双层认证机制
+- [订单类型](/concepts/order-types) - GTC、FOK、FAK、Post-Only 详解
 - [WebSocket](/concepts/websocket) - 实时数据订阅
