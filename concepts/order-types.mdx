@@ -1,0 +1,122 @@
+---
+title: Order Types
+description: "做市商 API 支持的订单类型及其行为说明"
+---
+
+## 概览
+
+Senal 做市商 API 支持四种订单类型，通过 `orderType` 字段指定。
+
+| 类型 | 全称 | 挂单到订单簿 | 部分成交 | 需要 expiration |
+|------|------|:-----------:|:-------:|:---------------:|
+| `GTC` | Good-Til-Cancelled | 是 | 是 | 否 |
+| `GTD` | Good-Til-Date | 是 | 是 | **必须** |
+| `FOK` | Fill-Or-Kill | 否 | 否 | 否 |
+| `FAK` | Fill-And-Kill (IOC) | 否 | 是 | 否 |
+
+## GTC — Good-Til-Cancelled
+
+限价单。提交后挂入订单簿，直到：
+- 被完全成交
+- 主动撤销（DELETE /v1/mm/orders/:id）
+- 心跳超时触发自动撤单
+
+```json
+{
+  "orderType": "GTC",
+  "side": "BUY",
+  "price": "0.6500",
+  "size": "100"
+}
+```
+
+## GTD — Good-Til-Date
+
+限价单 + 到期时间。行为与 GTC 完全相同，但会在 `expiration` 时间点自动撤销。
+
+- `expiration` 单位：Unix 秒
+- 到期前可主动撤销
+
+```json
+{
+  "orderType": "GTD",
+  "side": "SELL",
+  "price": "0.7200",
+  "size": "200",
+  "expiration": 1735689600
+}
+```
+
+<Warning>
+  GTD 订单必须提供 `expiration` 字段，且必须是未来时间，否则请求将被拒绝。
+</Warning>
+
+## FOK — Fill-Or-Kill
+
+吃单类型。要求订单**必须全部成交**，否则整笔取消，不产生任何成交记录。
+
+- 不会挂入订单簿
+- 不会产生部分成交
+- 适合需要确定性执行的场景
+
+```json
+{
+  "orderType": "FOK",
+  "side": "BUY",
+  "price": "0.6500",
+  "size": "100"
+}
+```
+
+## FAK — Fill-And-Kill (IOC)
+
+即时成交剩余撤销。尽可能多地成交当前订单簿上的对手盘，未成交部分立即取消。
+
+- 不会挂入订单簿
+- 允许部分成交
+- 也称为 IOC（Immediate-Or-Cancel）
+
+```json
+{
+  "orderType": "FAK",
+  "side": "BUY",
+  "price": "0.6500",
+  "size": "500"
+}
+```
+
+## Post-Only 模式
+
+`postOnly` 是 GTC/GTD 的可选标志，**不是独立的订单类型**。
+
+```json
+{
+  "orderType": "GTC",
+  "postOnly": true,
+  "side": "BUY",
+  "price": "0.6000",
+  "size": "100"
+}
+```
+
+### 行为规则
+
+Post-Only 确保订单**只会作为 Maker 挂入订单簿**，绝不立即成交：
+
+- BUY 单：若 `price >= bestAsk`，订单被**拒绝**（不会降价挂单）
+- SELL 单：若 `price <= bestBid`，订单被**拒绝**（不会提价挂单）
+
+拒绝时返回 HTTP 400，错误码 `4222`。
+
+<Note>
+  Post-Only 模式适合只想提供流动性（赚取 Maker 费率）的策略。若希望订单一定能成交，请勿使用 Post-Only。
+</Note>
+
+## 价格和数量约束
+
+| 参数 | 最小值 | 最大值 | 精度 |
+|------|--------|--------|------|
+| `price` | 0.0001 | 0.9999 | 0.0001 |
+| `size` | 1 | — | 1 |
+
+价格代表预测市场中某个 Outcome 的概率（0 到 1），因此范围限定在 0.0001 到 0.9999。

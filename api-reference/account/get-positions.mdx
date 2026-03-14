@@ -1,0 +1,87 @@
+---
+title: "Get Positions"
+api: "GET /v1/mm/positions"
+description: "查询所有持仓"
+---
+
+## 请求头（L2 认证）
+
+<ParamField header="SENAL-API-KEY" type="string" required>API Key</ParamField>
+<ParamField header="SENAL-SIGNATURE" type="string" required>HMAC-SHA256 签名（hex）</ParamField>
+<ParamField header="SENAL-TIMESTAMP" type="string" required>当前时间戳（毫秒）</ParamField>
+<ParamField header="SENAL-NONCE" type="string" required>随机字符串（至少 16 字节）</ParamField>
+<ParamField header="SENAL-PASSPHRASE" type="string" required>API Key 对应的 Passphrase</ParamField>
+
+## 响应
+
+返回仓位数组，每个元素对应一个持有非零仓位的 Token。
+
+<ResponseField name="[].tokenId" type="string">
+  Token ID
+</ResponseField>
+
+<ResponseField name="[].marketId" type="string">
+  所属市场 ID
+</ResponseField>
+
+<ResponseField name="[].size" type="string">
+  持仓数量（正数表示多头）
+</ResponseField>
+
+<ResponseField name="[].avgPrice" type="string">
+  平均持仓成本价
+</ResponseField>
+
+<ResponseField name="[].currentPrice" type="string">
+  当前最优价
+</ResponseField>
+
+<ResponseField name="[].unrealizedPnl" type="string">
+  未实现盈亏（USDC）
+</ResponseField>
+
+<ResponseField name="[].lockedSize" type="string">
+  被活跃卖单锁定的仓位数量
+</ResponseField>
+
+<ResponseField name="[].updatedAt" type="string">
+  最近更新时间（ISO 8601）
+</ResponseField>
+
+## 请求示例
+
+```bash
+curl "https://api.senal.market/v1/mm/positions" \
+  -H "SENAL-API-KEY: your_api_key" \
+  -H "SENAL-SIGNATURE: your_signature" \
+  -H "SENAL-TIMESTAMP: 1735689600000" \
+  -H "SENAL-NONCE: random_nonce_16bytes" \
+  -H "SENAL-PASSPHRASE: your_passphrase"
+```
+
+## 响应示例
+
+```json
+[
+  {
+    "tokenId": "0xabc123def456",
+    "marketId": "market_001",
+    "size": "300",
+    "avgPrice": "0.6200",
+    "currentPrice": "0.6500",
+    "unrealizedPnl": "9.00",
+    "lockedSize": "100",
+    "updatedAt": "2025-01-01T01:00:00.000Z"
+  },
+  {
+    "tokenId": "0xdef456abc123",
+    "marketId": "market_002",
+    "size": "500",
+    "avgPrice": "0.4800",
+    "currentPrice": "0.4500",
+    "unrealizedPnl": "-15.00",
+    "lockedSize": "0",
+    "updatedAt": "2025-01-01T00:30:00.000Z"
+  }
+]
+```

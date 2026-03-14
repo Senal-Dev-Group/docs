@@ -1,80 +1,171 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quick Start
+description: "5 分钟完成做市商 API 接入"
 ---
 
-## Get started in three steps
+## Prerequisites
 
-Get your documentation site running locally and make your first customization.
+1. 联系 Senal 团队注册做市商机构（提供钱包地址和 Safe 多签地址）
+2. 获取 API Key 三元组：`apiKey`、`apiSecret`、`passphrase`
 
-### Step 1: Set up your local environment
+## Step 1: Install SDK
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+<CodeGroup>
+```bash npm
+npm install crypto axios
+```
 
-### Step 2: Deploy your changes
+```bash pip
+pip install requests hmac hashlib
+```
+</CodeGroup>
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+## Step 2: Build Request Signature
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+每个 REST 请求需携带以下 Headers：
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+| Header | Description |
+|--------|-------------|
+| `SENAL-API-KEY` | 你的 API Key |
+| `SENAL-SIGNATURE` | HMAC-SHA256 签名 |
+| `SENAL-TIMESTAMP` | 当前时间戳（毫秒） |
+| `SENAL-NONCE` | 随机字符串（防重放） |
+| `SENAL-PASSPHRASE` | 你的 Passphrase |
 
-### Step 3: Go live
+**签名算法：**
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+```
+message = timestamp + nonce + METHOD + path + SHA256(body)
+signature = HMAC-SHA256(apiSecret, message)
+```
 
-## Next steps
+<CodeGroup>
+```typescript TypeScript
+import { createHmac, createHash, randomBytes } from 'crypto';
 
-Now that you have your docs running, explore these key features:
+function buildHeaders(
+  apiKey: string,
+  apiSecret: string,
+  passphrase: string,
+  method: string,
+  path: string,
+  body: string = '',
+) {
+  const timestamp = Date.now().toString();
+  const nonce = randomBytes(16).toString('hex');
+  const bodyHash = createHash('sha256').update(body).digest('hex');
+  const message = `${timestamp}${nonce}${method.toUpperCase()}${path}${bodyHash}`;
+  const signature = createHmac('sha256', apiSecret).update(message).digest('hex');
 
-<CardGroup cols={2}>
+  return {
+    'SENAL-API-KEY': apiKey,
+    'SENAL-SIGNATURE': signature,
+    'SENAL-TIMESTAMP': timestamp,
+    'SENAL-NONCE': nonce,
+    'SENAL-PASSPHRASE': passphrase,
+    'Content-Type': 'application/json',
+  };
+}
+```
 
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
+```python Python
+import hmac
+import hashlib
+import time
+import os
 
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
+def build_headers(api_key, api_secret, passphrase, method, path, body=""):
+    timestamp = str(int(time.time() * 1000))
+    nonce = os.urandom(16).hex()
+    body_hash = hashlib.sha256(body.encode()).hexdigest()
+    message = f"{timestamp}{nonce}{method.upper()}{path}{body_hash}"
+    signature = hmac.new(
+        api_secret.encode(), message.encode(), hashlib.sha256
+    ).hexdigest()
 
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
+    return {
+        "SENAL-API-KEY": api_key,
+        "SENAL-SIGNATURE": signature,
+        "SENAL-TIMESTAMP": timestamp,
+        "SENAL-NONCE": nonce,
+        "SENAL-PASSPHRASE": passphrase,
+        "Content-Type": "application/json",
+    }
+```
+</CodeGroup>
 
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
+## Step 3: Place Your First Order
 
-</CardGroup>
+<CodeGroup>
+```typescript TypeScript
+import axios from 'axios';
 
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+const BASE_URL = 'https://api.senal.market/v1';
+const API_KEY = 'your-api-key';
+const API_SECRET = 'your-api-secret';
+const PASSPHRASE = 'your-passphrase';
+
+async function placeOrder() {
+  const path = '/v1/mm/orders';
+  const body = JSON.stringify({
+    marketID: 'mkt_xxx',
+    tokenID: 'out_xxx',
+    side: 'BUY',
+    orderType: 'GTC',
+    price: 0.55,
+    size: 100,
+  });
+
+  const headers = buildHeaders(API_KEY, API_SECRET, PASSPHRASE, 'POST', path, body);
+  const res = await axios.post(`${BASE_URL}/mm/orders`, JSON.parse(body), { headers });
+  console.log('Order placed:', res.data);
+}
+
+placeOrder();
+```
+
+```python Python
+import requests
+import json
+
+BASE_URL = "https://api.senal.market/v1"
+API_KEY = "your-api-key"
+API_SECRET = "your-api-secret"
+PASSPHRASE = "your-passphrase"
+
+def place_order():
+    path = "/v1/mm/orders"
+    body = json.dumps({
+        "marketID": "mkt_xxx",
+        "tokenID": "out_xxx",
+        "side": "BUY",
+        "orderType": "GTC",
+        "price": 0.55,
+        "size": 100,
+    })
+
+    headers = build_headers(API_KEY, API_SECRET, PASSPHRASE, "POST", path, body)
+    res = requests.post(f"{BASE_URL}/mm/orders", data=body, headers=headers)
+    print("Order placed:", res.json())
+
+place_order()
+```
+</CodeGroup>
+
+## Step 4: Start Heartbeat
+
+做市期间需每 10 秒发送一次心跳，超过 15 秒未收到心跳将自动撤销所有挂单。
+
+```typescript
+setInterval(async () => {
+  const path = '/v1/mm/heartbeats';
+  const headers = buildHeaders(API_KEY, API_SECRET, PASSPHRASE, 'POST', path);
+  await axios.post(`${BASE_URL}/mm/heartbeats`, {}, { headers });
+}, 10_000);
+```
+
+## Next Steps
+
+- [Authentication](/authentication) - 了解 L1/L2 双层认证机制
+- [Order Types](/concepts/order-types) - GTC、FOK、FAK、Post-Only 详解
+- [WebSocket](/concepts/websocket) - 实时数据订阅

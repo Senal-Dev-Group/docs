@@ -1,0 +1,48 @@
+---
+title: "Get Total Value"
+api: "GET /v1/mm/positions/total-value"
+description: "查询账户持仓的总价值"
+---
+
+返回当前用户所有持仓按最优价格计算的总市值（USDC）。不包含 USDC 余额，仅计算 Token 仓位价值。
+
+## 请求头（L2 认证）
+
+<ParamField header="SENAL-API-KEY" type="string" required>API Key</ParamField>
+<ParamField header="SENAL-SIGNATURE" type="string" required>HMAC-SHA256 签名（hex）</ParamField>
+<ParamField header="SENAL-TIMESTAMP" type="string" required>当前时间戳（毫秒）</ParamField>
+<ParamField header="SENAL-NONCE" type="string" required>随机字符串（至少 16 字节）</ParamField>
+<ParamField header="SENAL-PASSPHRASE" type="string" required>API Key 对应的 Passphrase</ParamField>
+
+## 响应
+
+<ResponseField name="totalValue" type="string">
+  所有持仓的总市值（USDC），按各 Token 当前最优价格计算
+</ResponseField>
+
+## 请求示例
+
+```bash
+curl "https://api.senal.market/v1/mm/positions/total-value" \
+  -H "SENAL-API-KEY: your_api_key" \
+  -H "SENAL-SIGNATURE: your_signature" \
+  -H "SENAL-TIMESTAMP: 1735689600000" \
+  -H "SENAL-NONCE: random_nonce_16bytes" \
+  -H "SENAL-PASSPHRASE: your_passphrase"
+```
+
+## 响应示例
+
+```json
+{
+  "totalValue": "18750.00"
+}
+```
+
+无持仓时：
+
+```json
+{
+  "totalValue": "0.00"
+}
+```

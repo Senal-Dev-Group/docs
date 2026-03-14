@@ -1,0 +1,104 @@
+---
+title: "Get Orders"
+api: "GET /v1/mm/orders"
+description: "查询订单列表，支持按市场和状态过滤"
+---
+
+## 请求头（L2 认证）
+
+<ParamField header="SENAL-API-KEY" type="string" required>API Key</ParamField>
+<ParamField header="SENAL-SIGNATURE" type="string" required>HMAC-SHA256 签名（hex）</ParamField>
+<ParamField header="SENAL-TIMESTAMP" type="string" required>当前时间戳（毫秒）</ParamField>
+<ParamField header="SENAL-NONCE" type="string" required>随机字符串（至少 16 字节）</ParamField>
+<ParamField header="SENAL-PASSPHRASE" type="string" required>API Key 对应的 Passphrase</ParamField>
+
+## Query 参数
+
+<ParamField query="marketId" type="string">
+  按市场 ID 过滤
+</ParamField>
+
+<ParamField query="status" type="string">
+  按订单状态过滤：`OPEN`、`FILLED`、`PARTIALLY_FILLED`、`CANCELLED`
+</ParamField>
+
+<ParamField query="page" type="number">
+  页码，从 1 开始，默认 `1`
+</ParamField>
+
+<ParamField query="pageSize" type="number">
+  每页数量，默认 `20`，最大 `100`
+</ParamField>
+
+## 响应
+
+<ResponseField name="items" type="array">
+  订单列表
+
+  <Expandable title="order 对象">
+    <ResponseField name="id" type="string">订单 ID</ResponseField>
+    <ResponseField name="marketId" type="string">市场 ID</ResponseField>
+    <ResponseField name="tokenId" type="string">Token ID</ResponseField>
+    <ResponseField name="side" type="string">`BUY` 或 `SELL`</ResponseField>
+    <ResponseField name="orderType" type="string">订单类型</ResponseField>
+    <ResponseField name="price" type="string">限价</ResponseField>
+    <ResponseField name="size" type="string">原始数量</ResponseField>
+    <ResponseField name="filledSize" type="string">已成交数量</ResponseField>
+    <ResponseField name="remainingSize" type="string">剩余数量</ResponseField>
+    <ResponseField name="status" type="string">订单状态</ResponseField>
+    <ResponseField name="postOnly" type="boolean">是否为 Post-Only</ResponseField>
+    <ResponseField name="expiration" type="number">到期时间（Unix 秒），GTD 才有</ResponseField>
+    <ResponseField name="createdAt" type="string">创建时间（ISO 8601）</ResponseField>
+    <ResponseField name="updatedAt" type="string">最近更新时间（ISO 8601）</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="total" type="number">
+  符合条件的订单总数
+</ResponseField>
+
+<ResponseField name="page" type="number">
+  当前页码
+</ResponseField>
+
+<ResponseField name="pageSize" type="number">
+  每页数量
+</ResponseField>
+
+## 请求示例
+
+```bash
+curl "https://api.senal.market/v1/mm/orders?status=OPEN&page=1&pageSize=20" \
+  -H "SENAL-API-KEY: your_api_key" \
+  -H "SENAL-SIGNATURE: your_signature" \
+  -H "SENAL-TIMESTAMP: 1735689600000" \
+  -H "SENAL-NONCE: random_nonce_16bytes" \
+  -H "SENAL-PASSPHRASE: your_passphrase"
+```
+
+## 响应示例
+
+```json
+{
+  "items": [
+    {
+      "id": "order_01HXYZ001",
+      "marketId": "market_001",
+      "tokenId": "0xabc123def456",
+      "side": "BUY",
+      "orderType": "GTC",
+      "price": "0.6400",
+      "size": "200",
+      "filledSize": "0",
+      "remainingSize": "200",
+      "status": "OPEN",
+      "postOnly": false,
+      "createdAt": "2025-01-01T00:00:00.000Z",
+      "updatedAt": "2025-01-01T00:00:00.000Z"
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "pageSize": 20
+}
+```

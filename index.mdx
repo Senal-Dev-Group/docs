@@ -1,97 +1,52 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: Introduction
+description: "Senal Market Maker API - Build automated trading strategies on prediction markets"
 ---
 
-## Setting up
+# Senal Market Maker API
 
-Get your documentation site up and running in minutes.
+Senal 做市商 API 为机构交易者提供低延迟、高吞吐的预测市场做市接口。API 设计对齐 [Polymarket CLOB API](https://docs.polymarket.com)，方便已有做市系统快速接入。
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+## Key Features
 
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Dual-Layer Auth" icon="shield-halved">
+    L1 EIP-712 钱包签名 + L2 HMAC-SHA256 请求签名，兼顾安全与性能
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Order Types" icon="layer-group">
+    支持 GTC、GTD、FOK、FAK 四种订单类型，以及 Post-Only 模式
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Batch Operations" icon="boxes-stacked">
+    原子批量下单（最多 15 笔）、批量撤单（最多 3000 笔）
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Real-time WebSocket" icon="bolt">
+    订单簿、成交、订单状态、持仓变更实时推送
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## Base URL
 
-Everything you need to create world-class documentation.
+```
+https://api.senal.market/v1
+```
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+## Rate Limits
 
-## Need inspiration?
+| Endpoint | Limit |
+|----------|-------|
+| REST API | 100 req/s per API Key |
+| WebSocket | 5 connections per API Key |
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+## Quick Links
+
+<CardGroup cols={3}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    5 分钟完成首笔下单
+  </Card>
+  <Card title="Authentication" icon="key" href="/authentication">
+    认证流程详解
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/overview">
+    完整接口文档
+  </Card>
+</CardGroup>

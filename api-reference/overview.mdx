@@ -1,0 +1,124 @@
+---
+title: API Reference Overview
+description: "Senal 做市商 API 基础信息：Base URL、认证方式、响应格式与错误码"
+---
+
+## Base URL
+
+```
+https://api.senal.market/v1
+```
+
+所有 API 端点均以此 URL 为前缀。
+
+## 认证
+
+绝大多数端点使用 **L2 HMAC-SHA256** 认证。仅以下端点使用 **L1 EIP-712** 钱包签名：
+
+| 端点 | 认证方式 |
+|------|---------|
+| `POST /mm/auth/api-key` | L1（EIP-712） |
+| `POST /mm/auth/derive-api-key` | L1（EIP-712） |
+| 其余所有端点 | L2（HMAC-SHA256） |
+
+详细认证流程请参阅 [Authentication](/authentication)。
+
+### L2 请求头
+
+所有 L2 端点必须携带以下 Headers：
+
+| Header | 说明 |
+|--------|------|
+| `SENAL-API-KEY` | API Key |
+| `SENAL-SIGNATURE` | HMAC-SHA256 签名（hex） |
+| `SENAL-TIMESTAMP` | 当前时间戳（毫秒） |
+| `SENAL-NONCE` | 随机字符串（至少 16 字节，300 秒内不可重复） |
+| `SENAL-PASSPHRASE` | API Key 对应的 Passphrase |
+
+## 响应格式
+
+所有响应均为 JSON 格式，`Content-Type: application/json`。
+
+### 成功响应
+
+HTTP 2xx，Body 直接为数据对象或数组：
+
+```json
+{
+  "id": "order_001",
+  "status": "OPEN",
+  "price": "0.6500",
+  "size": "100"
+}
+```
+
+分页列表响应格式（cursor 分页）：
+
+```json
+{
+  "limit": 50,
+  "next_cursor": "eyJpZCI6MTAwfQ==",
+  "count": 50,
+  "data": [...]
+}
+```
+
+分页列表响应格式（offset 分页）：
+
+```json
+{
+  "items": [...],
+  "total": 200,
+  "page": 1,
+  "pageSize": 20
+}
+```
+
+### 错误响应
+
+```json
+{
+  "statusCode": 400,
+  "code": 4222,
+  "message": "Post-Only order would cross the spread"
+}
+```
+
+## 错误码
+
+### HTTP 状态码
+
+| HTTP 状态码 | 说明 |
+|------------|------|
+| `400` | 参数错误 / Post-Only 订单价格交叉（code 4222） |
+| `401` | 认证失败（签名错误、时间戳过期、Nonce 重放） |
+| `403` | 机构未注册或无权限 |
+| `404` | 资源不存在（订单、市场等） |
+| `429` | 请求频率超限 |
+
+### 业务错误码
+
+| code | 场景 |
+|------|------|
+| `4222` | Post-Only 订单价格会与对手盘交叉，被拒绝 |
+
+## 频率限制
+
+触发 429 时，响应 Header 会包含 `Retry-After`（秒），表示需要等待的时间。
+
+## 快速导航
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/authentication">
+    L1 / L2 认证详解
+  </Card>
+  <Card title="Order Types" icon="list" href="/concepts/order-types">
+    GTC、GTD、FOK、FAK、Post-Only
+  </Card>
+  <Card title="Heartbeat" icon="heart" href="/concepts/heartbeat">
+    保持挂单活跃
+  </Card>
+  <Card title="WebSocket" icon="bolt" href="/concepts/websocket">
+    实时数据推送
+  </Card>
+</CardGroup>

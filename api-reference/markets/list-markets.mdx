@@ -1,0 +1,110 @@
+---
+title: "List Markets"
+api: "GET /v1/mm/markets"
+description: "查询市场列表，支持状态过滤和 cursor 分页"
+---
+
+## 请求头（L2 认证）
+
+<ParamField header="SENAL-API-KEY" type="string" required>API Key</ParamField>
+<ParamField header="SENAL-SIGNATURE" type="string" required>HMAC-SHA256 签名（hex）</ParamField>
+<ParamField header="SENAL-TIMESTAMP" type="string" required>当前时间戳（毫秒）</ParamField>
+<ParamField header="SENAL-NONCE" type="string" required>随机字符串（至少 16 字节）</ParamField>
+<ParamField header="SENAL-PASSPHRASE" type="string" required>API Key 对应的 Passphrase</ParamField>
+
+## Query 参数
+
+<ParamField query="status" type="string">
+  按市场状态过滤：`ACTIVE`、`RESOLVED`、`CLOSED`
+</ParamField>
+
+<ParamField query="acceptingOrders" type="boolean">
+  若为 `true`，只返回当前接受下单的市场
+</ParamField>
+
+<ParamField query="cursor" type="string">
+  分页游标，首次查询不传
+</ParamField>
+
+<ParamField query="limit" type="number">
+  每页数量，默认 `50`，最大 `100`
+</ParamField>
+
+## 响应
+
+<ResponseField name="limit" type="number">本次请求的 limit 值</ResponseField>
+<ResponseField name="next_cursor" type="string">下一页游标，`null` 表示最后一页</ResponseField>
+<ResponseField name="count" type="number">本次返回的市场数量</ResponseField>
+<ResponseField name="data" type="array">
+  市场列表
+
+  <Expandable title="market 对象">
+    <ResponseField name="id" type="string">市场 ID</ResponseField>
+    <ResponseField name="eventId" type="string">关联事件 ID</ResponseField>
+    <ResponseField name="question" type="string">市场问题描述</ResponseField>
+    <ResponseField name="status" type="string">市场状态：`ACTIVE`、`RESOLVED`、`CLOSED`</ResponseField>
+    <ResponseField name="acceptingOrders" type="boolean">是否接受下单</ResponseField>
+    <ResponseField name="tickSize" type="string">最小价格步进，如 `"0.0001"`</ResponseField>
+    <ResponseField name="minimumOrderSize" type="string">最小订单数量，如 `"1"`</ResponseField>
+    <ResponseField name="volume" type="string">累计成交量（USDC）</ResponseField>
+    <ResponseField name="liquidity" type="string">当前流动性（USDC）</ResponseField>
+    <ResponseField name="outcomes" type="array">
+      市场结果列表
+
+      <Expandable title="outcome 对象">
+        <ResponseField name="id" type="string">结果 ID</ResponseField>
+        <ResponseField name="name" type="string">结果名称，如 `"Yes"`、`"No"`</ResponseField>
+        <ResponseField name="tokenId" type="string">对应的 Token ID</ResponseField>
+        <ResponseField name="price" type="string">当前最优价</ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## 请求示例
+
+```bash
+curl "https://api.senal.market/v1/mm/markets?acceptingOrders=true&limit=50" \
+  -H "SENAL-API-KEY: your_api_key" \
+  -H "SENAL-SIGNATURE: your_signature" \
+  -H "SENAL-TIMESTAMP: 1735689600000" \
+  -H "SENAL-NONCE: random_nonce_16bytes" \
+  -H "SENAL-PASSPHRASE: your_passphrase"
+```
+
+## 响应示例
+
+```json
+{
+  "limit": 50,
+  "next_cursor": "eyJpZCI6NTB9",
+  "count": 50,
+  "data": [
+    {
+      "id": "market_001",
+      "eventId": "event_001",
+      "question": "Will BTC exceed $100,000 by end of 2025?",
+      "status": "ACTIVE",
+      "acceptingOrders": true,
+      "tickSize": "0.0001",
+      "minimumOrderSize": "1",
+      "volume": "1250000.00",
+      "liquidity": "85000.00",
+      "outcomes": [
+        {
+          "id": "outcome_yes",
+          "name": "Yes",
+          "tokenId": "0xabc123def456",
+          "price": "0.6500"
+        },
+        {
+          "id": "outcome_no",
+          "name": "No",
+          "tokenId": "0xdef456abc123",
+          "price": "0.3500"
+        }
+      ]
+    }
+  ]
+}
+```

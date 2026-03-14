@@ -1,0 +1,61 @@
+---
+title: "Cancel Market Orders"
+api: "DELETE /v1/mm/orders/market/{tokenId}"
+description: "撤销指定市场（Token）的所有活跃订单"
+---
+
+撤销当前用户在指定 Token 下所有状态为 `OPEN` 或 `PARTIALLY_FILLED` 的挂单。
+
+## 请求头（L2 认证）
+
+<ParamField header="SENAL-API-KEY" type="string" required>API Key</ParamField>
+<ParamField header="SENAL-SIGNATURE" type="string" required>HMAC-SHA256 签名（hex）</ParamField>
+<ParamField header="SENAL-TIMESTAMP" type="string" required>当前时间戳（毫秒）</ParamField>
+<ParamField header="SENAL-NONCE" type="string" required>随机字符串（至少 16 字节）</ParamField>
+<ParamField header="SENAL-PASSPHRASE" type="string" required>API Key 对应的 Passphrase</ParamField>
+
+## 路径参数
+
+<ParamField path="tokenId" type="string" required>
+  Token ID（即市场中某个 Outcome 的 token 地址）
+</ParamField>
+
+## 响应
+
+<ResponseField name="results" type="array">
+  每笔被撤销订单的结果
+
+  <Expandable title="result 对象">
+    <ResponseField name="orderId" type="string">订单 ID</ResponseField>
+    <ResponseField name="success" type="boolean">是否撤销成功</ResponseField>
+    <ResponseField name="reason" type="string">失败原因（仅 `success: false` 时存在）</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## 请求示例
+
+```bash
+curl -X DELETE "https://api.senal.market/v1/mm/orders/market/0xabc123def456" \
+  -H "SENAL-API-KEY: your_api_key" \
+  -H "SENAL-SIGNATURE: your_signature" \
+  -H "SENAL-TIMESTAMP: 1735689600000" \
+  -H "SENAL-NONCE: random_nonce_16bytes" \
+  -H "SENAL-PASSPHRASE: your_passphrase"
+```
+
+## 响应示例
+
+```json
+{
+  "results": [
+    {
+      "orderId": "order_01HXYZ001",
+      "success": true
+    },
+    {
+      "orderId": "order_01HXYZ002",
+      "success": true
+    }
+  ]
+}
+```

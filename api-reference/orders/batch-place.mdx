@@ -1,0 +1,103 @@
+---
+title: "Batch Place Orders"
+api: "POST /v1/mm/orders/batch"
+description: "原子批量下单，最多 15 笔"
+---
+
+批量下单是**原子操作**：若任意一笔订单验证失败，整批请求均被拒绝，不会部分执行。
+
+## 请求头（L2 认证）
+
+<ParamField header="SENAL-API-KEY" type="string" required>API Key</ParamField>
+<ParamField header="SENAL-SIGNATURE" type="string" required>HMAC-SHA256 签名（hex）</ParamField>
+<ParamField header="SENAL-TIMESTAMP" type="string" required>当前时间戳（毫秒）</ParamField>
+<ParamField header="SENAL-NONCE" type="string" required>随机字符串（至少 16 字节）</ParamField>
+<ParamField header="SENAL-PASSPHRASE" type="string" required>API Key 对应的 Passphrase</ParamField>
+
+## 请求体
+
+<ParamField body="orders" type="array" required>
+  订单列表，最多 **15** 笔。每个元素与 [Place Order](/api-reference/orders/place-order) 的请求体格式相同。
+
+  <Expandable title="order 对象">
+    <ParamField body="marketID" type="string" required>市场 ID</ParamField>
+    <ParamField body="tokenID" type="string" required>Token ID</ParamField>
+    <ParamField body="side" type="string" required>`BUY` 或 `SELL`</ParamField>
+    <ParamField body="orderType" type="string" required>`GTC`、`GTD`、`FOK` 或 `FAK`</ParamField>
+    <ParamField body="price" type="string" required>限价，精度 0.0001，范围 0.0001–0.9999</ParamField>
+    <ParamField body="size" type="string" required>数量（整数），最小 1</ParamField>
+    <ParamField body="expiration" type="number">GTD 必填，订单到期时间（Unix 秒）</ParamField>
+    <ParamField body="postOnly" type="boolean">Post-Only 模式，仅适用于 GTC/GTD</ParamField>
+  </Expandable>
+</ParamField>
+
+## 响应
+
+返回与请求顺序对应的订单结果数组。
+
+<ResponseField name="[].id" type="string">
+  订单 ID
+</ResponseField>
+
+<ResponseField name="[].status" type="string">
+  订单状态：`OPEN`、`FILLED`、`PARTIALLY_FILLED`、`CANCELLED`
+</ResponseField>
+
+<ResponseField name="[].trades" type="array">
+  本笔订单触发的成交记录
+
+  <Expandable title="trade 对象">
+    <ResponseField name="id" type="string">成交 ID</ResponseField>
+    <ResponseField name="price" type="string">成交价格</ResponseField>
+    <ResponseField name="size" type="string">成交数量</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## 请求示例
+
+```bash
+curl -X POST https://api.senal.market/v1/mm/orders/batch \
+  -H "Content-Type: application/json" \
+  -H "SENAL-API-KEY: your_api_key" \
+  -H "SENAL-SIGNATURE: your_signature" \
+  -H "SENAL-TIMESTAMP: 1735689600000" \
+  -H "SENAL-NONCE: random_nonce_16bytes" \
+  -H "SENAL-PASSPHRASE: your_passphrase" \
+  -d '{
+    "orders": [
+      {
+        "marketID": "market_001",
+        "tokenID": "0xabc123def456",
+        "side": "BUY",
+        "orderType": "GTC",
+        "price": "0.6400",
+        "size": "200"
+      },
+      {
+        "marketID": "market_001",
+        "tokenID": "0xabc123def456",
+        "side": "SELL",
+        "orderType": "GTC",
+        "price": "0.6600",
+        "size": "200"
+      }
+    ]
+  }'
+```
+
+## 响应示例
+
+```json
+[
+  {
+    "id": "order_01HXYZ001",
+    "status": "OPEN",
+    "trades": []
+  },
+  {
+    "id": "order_01HXYZ002",
+    "status": "OPEN",
+    "trades": []
+  }
+]
+```

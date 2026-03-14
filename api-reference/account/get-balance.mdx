@@ -1,0 +1,47 @@
+---
+title: "Get Balance"
+api: "GET /v1/mm/account/balance"
+description: "查询账户 USDC 余额（可用余额和锁定余额）"
+---
+
+## 请求头（L2 认证）
+
+<ParamField header="SENAL-API-KEY" type="string" required>API Key</ParamField>
+<ParamField header="SENAL-SIGNATURE" type="string" required>HMAC-SHA256 签名（hex）</ParamField>
+<ParamField header="SENAL-TIMESTAMP" type="string" required>当前时间戳（毫秒）</ParamField>
+<ParamField header="SENAL-NONCE" type="string" required>随机字符串（至少 16 字节）</ParamField>
+<ParamField header="SENAL-PASSPHRASE" type="string" required>API Key 对应的 Passphrase</ParamField>
+
+## 响应
+
+<ResponseField name="available" type="string">
+  可用余额（USDC），可用于下单
+</ResponseField>
+
+<ResponseField name="locked" type="string">
+  锁定余额（USDC），已被活跃买单占用，等待成交或撤销后释放
+</ResponseField>
+
+<Note>
+  总余额 = `available` + `locked`。卖出 Token 时不需要锁定 USDC，而是锁定对应的 Token 仓位。
+</Note>
+
+## 请求示例
+
+```bash
+curl "https://api.senal.market/v1/mm/account/balance" \
+  -H "SENAL-API-KEY: your_api_key" \
+  -H "SENAL-SIGNATURE: your_signature" \
+  -H "SENAL-TIMESTAMP: 1735689600000" \
+  -H "SENAL-NONCE: random_nonce_16bytes" \
+  -H "SENAL-PASSPHRASE: your_passphrase"
+```
+
+## 响应示例
+
+```json
+{
+  "available": "9500.00",
+  "locked": "500.00"
+}
+```

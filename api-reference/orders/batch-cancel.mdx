@@ -1,0 +1,74 @@
+---
+title: "Batch Cancel Orders"
+api: "DELETE /v1/mm/orders/batch"
+description: "批量撤销指定订单，最多 3000 笔"
+---
+
+批量撤销是**非原子操作**：每笔订单独立处理，部分失败不影响其他订单。
+
+## 请求头（L2 认证）
+
+<ParamField header="SENAL-API-KEY" type="string" required>API Key</ParamField>
+<ParamField header="SENAL-SIGNATURE" type="string" required>HMAC-SHA256 签名（hex）</ParamField>
+<ParamField header="SENAL-TIMESTAMP" type="string" required>当前时间戳（毫秒）</ParamField>
+<ParamField header="SENAL-NONCE" type="string" required>随机字符串（至少 16 字节）</ParamField>
+<ParamField header="SENAL-PASSPHRASE" type="string" required>API Key 对应的 Passphrase</ParamField>
+
+## 请求体
+
+<ParamField body="orderIds" type="array" required>
+  要撤销的订单 ID 列表，最多 **3000** 个。
+</ParamField>
+
+## 响应
+
+<ResponseField name="results" type="array">
+  每笔订单的撤销结果，与请求中 `orderIds` 顺序对应
+
+  <Expandable title="result 对象">
+    <ResponseField name="orderId" type="string">订单 ID</ResponseField>
+    <ResponseField name="success" type="boolean">是否撤销成功</ResponseField>
+    <ResponseField name="reason" type="string">失败原因（仅 `success: false` 时存在）</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## 请求示例
+
+```bash
+curl -X DELETE https://api.senal.market/v1/mm/orders/batch \
+  -H "Content-Type: application/json" \
+  -H "SENAL-API-KEY: your_api_key" \
+  -H "SENAL-SIGNATURE: your_signature" \
+  -H "SENAL-TIMESTAMP: 1735689600000" \
+  -H "SENAL-NONCE: random_nonce_16bytes" \
+  -H "SENAL-PASSPHRASE: your_passphrase" \
+  -d '{
+    "orderIds": [
+      "order_01HXYZ001",
+      "order_01HXYZ002",
+      "order_01HXYZ003"
+    ]
+  }'
+```
+
+## 响应示例
+
+```json
+{
+  "results": [
+    {
+      "orderId": "order_01HXYZ001",
+      "success": true
+    },
+    {
+      "orderId": "order_01HXYZ002",
+      "success": true
+    },
+    {
+      "orderId": "order_01HXYZ003",
+      "success": false,
+      "reason": "Order is already filled"
+    }
+  ]
+}
+```

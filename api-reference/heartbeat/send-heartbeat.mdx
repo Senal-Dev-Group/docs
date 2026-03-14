@@ -1,0 +1,57 @@
+---
+title: "Send Heartbeat"
+api: "POST /v1/mm/heartbeats"
+description: "发送心跳，维持挂单活跃状态"
+---
+
+做市期间必须定期发送心跳。超过 **15 秒**未收到心跳，系统将自动撤销该 API Key 关联用户的所有活跃挂单。
+
+详见 [Heartbeat](/concepts/heartbeat)。
+
+## 请求头（L2 认证）
+
+<ParamField header="SENAL-API-KEY" type="string" required>API Key</ParamField>
+<ParamField header="SENAL-SIGNATURE" type="string" required>HMAC-SHA256 签名（hex）</ParamField>
+<ParamField header="SENAL-TIMESTAMP" type="string" required>当前时间戳（毫秒）</ParamField>
+<ParamField header="SENAL-NONCE" type="string" required>随机字符串（至少 16 字节）</ParamField>
+<ParamField header="SENAL-PASSPHRASE" type="string" required>API Key 对应的 Passphrase</ParamField>
+
+请求 Body 为空。
+
+## 响应
+
+<ResponseField name="status" type="string">
+  固定返回 `"ok"`
+</ResponseField>
+
+## 请求示例
+
+```bash
+curl -X POST https://api.senal.market/v1/mm/heartbeats \
+  -H "SENAL-API-KEY: your_api_key" \
+  -H "SENAL-SIGNATURE: your_signature" \
+  -H "SENAL-TIMESTAMP: 1735689600000" \
+  -H "SENAL-NONCE: random_nonce_16bytes" \
+  -H "SENAL-PASSPHRASE: your_passphrase"
+```
+
+## 响应示例
+
+```json
+{
+  "status": "ok"
+}
+```
+
+## 建议实现
+
+建议每 **10 秒**发送一次心跳，留出足够的容错时间（超时阈值为 15 秒）。
+
+```typescript
+setInterval(async () => {
+  await fetch('https://api.senal.market/v1/mm/heartbeats', {
+    method: 'POST',
+    headers: buildL2Headers('POST', '/v1/mm/heartbeats', ''),
+  });
+}, 10_000);
+```

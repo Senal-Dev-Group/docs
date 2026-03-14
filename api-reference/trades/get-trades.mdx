@@ -1,0 +1,116 @@
+---
+title: "Get Trades"
+api: "GET /v1/mm/trades"
+description: "查询成交记录，仅返回 Maker 侧成交，支持 cursor 分页"
+---
+
+<Note>
+  此接口**仅返回做市商作为 Maker 侧的成交记录**，即当你的挂单被他人吃掉时产生的成交。作为 Taker 主动吃单的成交不在此列表中。
+</Note>
+
+## 请求头（L2 认证）
+
+<ParamField header="SENAL-API-KEY" type="string" required>API Key</ParamField>
+<ParamField header="SENAL-SIGNATURE" type="string" required>HMAC-SHA256 签名（hex）</ParamField>
+<ParamField header="SENAL-TIMESTAMP" type="string" required>当前时间戳（毫秒）</ParamField>
+<ParamField header="SENAL-NONCE" type="string" required>随机字符串（至少 16 字节）</ParamField>
+<ParamField header="SENAL-PASSPHRASE" type="string" required>API Key 对应的 Passphrase</ParamField>
+
+## Query 参数
+
+<ParamField query="marketId" type="string">
+  按市场 ID 过滤
+</ParamField>
+
+<ParamField query="tokenId" type="string">
+  按 Token ID 过滤
+</ParamField>
+
+<ParamField query="cursor" type="string">
+  分页游标，从上一页响应的 `next_cursor` 获取。首次查询不传
+</ParamField>
+
+<ParamField query="limit" type="number">
+  每页数量，默认 `100`，最大 `100`
+</ParamField>
+
+## 响应
+
+<ResponseField name="limit" type="number">
+  本次请求的 limit 值
+</ResponseField>
+
+<ResponseField name="next_cursor" type="string">
+  下一页的游标。若为 `null` 或空字符串，表示已是最后一页
+</ResponseField>
+
+<ResponseField name="count" type="number">
+  本次返回的记录数量
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  成交记录列表
+
+  <Expandable title="trade 对象">
+    <ResponseField name="id" type="string">成交 ID</ResponseField>
+    <ResponseField name="marketId" type="string">市场 ID</ResponseField>
+    <ResponseField name="tokenId" type="string">Token ID</ResponseField>
+    <ResponseField name="side" type="string">做市商挂单方向：`BUY` 或 `SELL`</ResponseField>
+    <ResponseField name="price" type="string">成交价格</ResponseField>
+    <ResponseField name="size" type="string">成交数量</ResponseField>
+    <ResponseField name="orderId" type="string">对应的订单 ID</ResponseField>
+    <ResponseField name="status" type="string">成交状态：`CONFIRMED`、`PENDING`</ResponseField>
+    <ResponseField name="createdAt" type="string">成交时间（ISO 8601）</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## 请求示例
+
+```bash
+# 首次查询
+curl "https://api.senal.market/v1/mm/trades?limit=100" \
+  -H "SENAL-API-KEY: your_api_key" \
+  -H "SENAL-SIGNATURE: your_signature" \
+  -H "SENAL-TIMESTAMP: 1735689600000" \
+  -H "SENAL-NONCE: random_nonce_16bytes" \
+  -H "SENAL-PASSPHRASE: your_passphrase"
+
+# 翻页
+curl "https://api.senal.market/v1/mm/trades?limit=100&cursor=eyJpZCI6MTAwfQ==" \
+  -H "SENAL-API-KEY: your_api_key" \
+  ...
+```
+
+## 响应示例
+
+```json
+{
+  "limit": 100,
+  "next_cursor": "eyJpZCI6MTAwfQ==",
+  "count": 100,
+  "data": [
+    {
+      "id": "trade_01HABC001",
+      "marketId": "market_001",
+      "tokenId": "0xabc123def456",
+      "side": "BUY",
+      "price": "0.6500",
+      "size": "50",
+      "orderId": "order_01HXYZ001",
+      "status": "CONFIRMED",
+      "createdAt": "2025-01-01T00:05:00.000Z"
+    }
+  ]
+}
+```
+
+最后一页（无更多数据）：
+
+```json
+{
+  "limit": 100,
+  "next_cursor": null,
+  "count": 3,
+  "data": [...]
+}
+```

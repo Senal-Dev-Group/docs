@@ -1,0 +1,106 @@
+---
+title: Heartbeat
+description: "做市期间的心跳机制：保持挂单活跃的必要操作"
+---
+
+## 为什么需要心跳
+
+Senal 通过心跳机制检测做市商的连接状态。当做市商异常断线时，系统会自动撤销其所有挂单，防止在无人监控的情况下产生非预期成交。
+
+## 发送心跳
+
+```http
+POST /v1/mm/heartbeats
+```
+
+心跳请求使用 **L2 HMAC 认证**，请求 Body 为空。
+
+### 请求示例
+
+```bash
+curl -X POST https://api.senal.market/v1/mm/heartbeats \
+  -H "SENAL-API-KEY: your_api_key" \
+  -H "SENAL-SIGNATURE: your_signature" \
+  -H "SENAL-TIMESTAMP: 1735689600000" \
+  -H "SENAL-NONCE: random_nonce_string" \
+  -H "SENAL-PASSPHRASE: your_passphrase"
+```
+
+### 响应
+
+```json
+{
+  "status": "ok"
+}
+```
+
+## 超时规则
+
+| 参数 | 值 |
+|------|----|
+| 建议心跳间隔 | **10 秒** |
+| 超时阈值 | **15 秒** |
+| 超时后操作 | 自动撤销用户所有活跃挂单 |
+
+超过 15 秒未收到心跳，系统将自动撤销该 API Key 关联用户的**所有活跃挂单**。
+
+<Warning>
+  心跳超时撤单是**不可逆**的。被撤销的订单不会自动恢复，需要重新提交。
+</Warning>
+
+## 作用域说明
+
+心跳机制有两个层级需要理解：
+
+```
+API Key A ──heartbeat──► 重置 API Key A 的超时计时器
+API Key B ──heartbeat──► 重置 API Key B 的超时计时器
+
+用户 X 拥有 Key A 和 Key B：
+  Key A 超时 ──► 撤销用户 X 的所有订单（包括 Key B 下单的订单）
+```
+
+- **心跳是 per-API-Key 的**：每个 API Key 独立维护超时计时器，需要各自发送心跳
+- **撤单是 per-User 的**：任意一个 API Key 超时，会撤销该用户名下所有活跃订单
+
+<Note>
+  如果你使用多个 API Key 做市，每个 Key 都必须独立发送心跳。任一 Key 超时将导致整个用户的挂单被撤销。
+</Note>
+
+## 推荐实现
+
+```typescript
+class HeartbeatManager {
+  private interval: NodeJS.Timeout | null = null;
+  private readonly INTERVAL_MS = 10_000; // 10 秒
+
+  start() {
+    this.interval = setInterval(async () => {
+      try {
+        await this.sendHeartbeat();
+      } catch (err) {
+        console.error('Heartbeat failed:', err);
+        // 建议：失败时告警并尝试重连
+      }
+    }, this.INTERVAL_MS);
+  }
+
+  stop() {
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
+    }
+  }
+
+  private async sendHeartbeat() {
+    const response = await senalClient.post('/v1/mm/heartbeats');
+    if (response.status !== 'ok') {
+      throw new Error('Unexpected heartbeat response');
+    }
+  }
+}
+```
+
+<Warning>
+  在程序退出前，建议主动调用 DELETE /v1/mm/orders 撤销所有订单，而不是依赖超时机制。
+</Warning>

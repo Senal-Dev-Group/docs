@@ -1,0 +1,95 @@
+---
+title: "Place Order"
+description: "提交单笔订单"
+---
+
+## `POST /v1/mm/orders`
+
+提交一笔限价订单到撮合引擎。
+
+### Request Headers
+
+所有请求需携带 [L2 认证](/authentication#l2-hmac-sha256-request-signing) Headers。
+
+### Request Body
+
+<ParamField body="marketID" type="string" required>
+  市场 ID
+</ParamField>
+
+<ParamField body="tokenID" type="string" required>
+  Outcome Token ID
+</ParamField>
+
+<ParamField body="side" type="string" required>
+  `BUY` 或 `SELL`
+</ParamField>
+
+<ParamField body="orderType" type="string" required>
+  订单类型：`GTC` | `GTD` | `FOK` | `FAK`
+</ParamField>
+
+<ParamField body="price" type="number" required>
+  价格，范围 0.0001 - 0.9999，精度 4 位小数
+</ParamField>
+
+<ParamField body="size" type="number" required>
+  数量，最小 1
+</ParamField>
+
+<ParamField body="expiration" type="number">
+  过期时间（Unix 秒），仅 `GTD` 类型必填
+</ParamField>
+
+<ParamField body="postOnly" type="boolean" default="false">
+  Post-Only 模式，仅 `GTC` / `GTD` 有效。如果订单会立即成交（价格交叉），则被拒绝
+</ParamField>
+
+### Response
+
+<ResponseField name="id" type="string">
+  订单 ID
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  订单状态：`open` | `filled` | `partially_filled` | `cancelled`
+</ResponseField>
+
+<ResponseField name="trades" type="array">
+  立即成交的交易列表
+  <Expandable>
+    <ResponseField name="id" type="string">交易 ID</ResponseField>
+    <ResponseField name="price" type="string">成交价格</ResponseField>
+    <ResponseField name="size" type="string">成交数量</ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Example
+
+<CodeGroup>
+```json Request
+{
+  "marketID": "mkt_2jk8f9a3b",
+  "tokenID": "out_yes_2jk8f9a3b",
+  "side": "BUY",
+  "orderType": "GTC",
+  "price": 0.55,
+  "size": 100
+}
+```
+
+```json Response
+{
+  "id": "xord_8f3k2j1a9",
+  "status": "open",
+  "trades": []
+}
+```
+
+```json Post-Only Rejected (400)
+{
+  "error": 4222,
+  "message": "Post-only order would cross the spread"
+}
+```
+</CodeGroup>
