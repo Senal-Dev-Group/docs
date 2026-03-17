@@ -28,9 +28,9 @@ Senal 做市商 API 使用双层认证机制：
 3. signature  = HMAC-SHA256(api_secret, message)
 ```
 
-<Note>
-  `path` 只包含路径部分，不含 query string。例如 `/v1/mm/orders` 而非 `/v1/mm/orders?page=1`。
-</Note>
+<Warning>
+  `path` 必须包含完整路径（含 `/v1` 前缀），例如 `/v1/mm/orders`。常见错误是只传 `/mm/orders`，这会导致签名不匹配返回 401。路径不含 query string，例如 `/v1/mm/orders` 而非 `/v1/mm/orders?page=1`。
+</Warning>
 
 ### 安全规则
 

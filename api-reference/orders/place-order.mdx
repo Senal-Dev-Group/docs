@@ -11,6 +11,10 @@ description: "提交单笔订单"
 
 所有请求需携带 [L2 认证](/authentication#l2-hmac-sha256-request-signing) Headers。
 
+<Warning>
+  请求必须包含有效的 JSON Body。发送空 body 或非 JSON 内容会返回 400 `"not valid JSON"`。
+</Warning>
+
 ### Request Body
 
 <ParamField body="marketID" type="string" required>
@@ -90,6 +94,13 @@ description: "提交单笔订单"
 {
   "error": 4222,
   "message": "Post-only order would cross the spread"
+}
+```
+
+```json Invalid Body (400)
+{
+  "error": 400,
+  "message": "not valid JSON"
 }
 ```
 </CodeGroup>

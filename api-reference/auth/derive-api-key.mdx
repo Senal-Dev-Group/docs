@@ -86,3 +86,16 @@ curl -X POST https://api.senal.market/v1/mm/auth/derive-api-key \
   "apiKey": "ak_abcdef1234567890abcdef1234567890"
 }
 ```
+
+钱包未注册时返回 HTTP 403：
+
+```json
+{
+  "statusCode": 403,
+  "message": "Forbidden"
+}
+```
+
+<Note>
+  此端点要求钱包已在平台注册。未注册钱包调用会返回 403，需先完成注册流程。
+</Note>
