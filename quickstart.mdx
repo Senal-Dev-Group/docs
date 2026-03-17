@@ -110,7 +110,7 @@ async function placeOrder() {
   const body = JSON.stringify({
     marketID: 'mkt_xxx',
     tokenID: 'out_xxx',
-    side: 'BUY',
+    side: 'buy',
     orderType: 'GTC',
     price: 0.55,
     size: 100,
@@ -138,7 +138,7 @@ def place_order():
     body = json.dumps({
         "marketID": "mkt_xxx",
         "tokenID": "out_xxx",
-        "side": "BUY",
+        "side": "buy",
         "orderType": "GTC",
         "price": 0.55,
         "size": 100,

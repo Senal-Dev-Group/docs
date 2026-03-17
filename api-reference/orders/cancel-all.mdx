@@ -4,7 +4,7 @@ api: "DELETE /v1/mm/orders"
 description: "撤销当前用户的所有活跃订单"
 ---
 
-撤销当前认证用户下所有状态为 `OPEN` 或 `PARTIALLY_FILLED` 的挂单。
+撤销当前认证用户下所有状态为 `open` 或 `partially_filled` 的挂单。
 
 <Note>
   此操作跨所有市场生效。如果只想撤销特定市场的订单，请使用 [Cancel Market Orders](/api-reference/orders/cancel-market)。

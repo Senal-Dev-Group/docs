@@ -30,7 +30,7 @@ description: "orders — 订单状态变更实时推送（私有）"
   "channel": "orders",
   "data": {
     "id": "order_001",
-    "status": "PARTIALLY_FILLED",
+    "status": "partially_filled",
     "filledSize": "50",
     "remainingSize": "50",
     "updatedAt": "1735689600000"
@@ -43,7 +43,7 @@ description: "orders — 订单状态变更实时推送（私有）"
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | `id` | string | 订单 ID |
-| `status` | string | 订单状态：`OPEN`、`PARTIALLY_FILLED`、`FILLED`、`CANCELLED` |
+| `status` | string | 订单状态：`open`、`partially_filled`、`filled`、`cancelled` |
 | `filledSize` | string | 已成交数量 |
 | `remainingSize` | string | 剩余未成交数量 |
 | `updatedAt` | string | 更新时间戳（毫秒） |

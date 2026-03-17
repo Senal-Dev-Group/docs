@@ -22,7 +22,7 @@ description: "原子批量下单，最多 15 笔"
   <Expandable title="order 对象">
     <ParamField body="marketID" type="string" required>市场 ID</ParamField>
     <ParamField body="tokenID" type="string" required>Token ID</ParamField>
-    <ParamField body="side" type="string" required>`BUY` 或 `SELL`</ParamField>
+    <ParamField body="side" type="string" required>`buy` 或 `sell`</ParamField>
     <ParamField body="orderType" type="string" required>`GTC`、`GTD`、`FOK` 或 `FAK`</ParamField>
     <ParamField body="price" type="string" required>限价，精度 0.0001，范围 0.0001–0.9999</ParamField>
     <ParamField body="size" type="string" required>数量（整数），最小 1</ParamField>
@@ -40,7 +40,7 @@ description: "原子批量下单，最多 15 笔"
 </ResponseField>
 
 <ResponseField name="[].status" type="string">
-  订单状态：`OPEN`、`FILLED`、`PARTIALLY_FILLED`、`CANCELLED`
+  订单状态：`open`、`filled`、`partially_filled`、`cancelled`
 </ResponseField>
 
 <ResponseField name="[].trades" type="array">
@@ -68,7 +68,7 @@ curl -X POST https://api.senal.market/v1/mm/orders/batch \
       {
         "marketID": "market_001",
         "tokenID": "0xabc123def456",
-        "side": "BUY",
+        "side": "buy",
         "orderType": "GTC",
         "price": "0.6400",
         "size": "200"
@@ -76,7 +76,7 @@ curl -X POST https://api.senal.market/v1/mm/orders/batch \
       {
         "marketID": "market_001",
         "tokenID": "0xabc123def456",
-        "side": "SELL",
+        "side": "sell",
         "orderType": "GTC",
         "price": "0.6600",
         "size": "200"
@@ -91,12 +91,12 @@ curl -X POST https://api.senal.market/v1/mm/orders/batch \
 [
   {
     "id": "order_01HXYZ001",
-    "status": "OPEN",
+    "status": "open",
     "trades": []
   },
   {
     "id": "order_01HXYZ002",
-    "status": "OPEN",
+    "status": "open",
     "trades": []
   }
 ]

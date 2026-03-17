@@ -23,13 +23,13 @@ description: "查询单笔订单详情"
 <ResponseField name="id" type="string">订单 ID</ResponseField>
 <ResponseField name="marketId" type="string">市场 ID</ResponseField>
 <ResponseField name="tokenId" type="string">Token ID</ResponseField>
-<ResponseField name="side" type="string">`BUY` 或 `SELL`</ResponseField>
+<ResponseField name="side" type="string">`buy` 或 `sell`</ResponseField>
 <ResponseField name="orderType" type="string">订单类型：`GTC`、`GTD`、`FOK`、`FAK`</ResponseField>
 <ResponseField name="price" type="string">限价</ResponseField>
 <ResponseField name="size" type="string">原始数量</ResponseField>
 <ResponseField name="filledSize" type="string">已成交数量</ResponseField>
 <ResponseField name="remainingSize" type="string">剩余数量</ResponseField>
-<ResponseField name="status" type="string">订单状态：`OPEN`、`FILLED`、`PARTIALLY_FILLED`、`CANCELLED`</ResponseField>
+<ResponseField name="status" type="string">订单状态：`open`、`filled`、`partially_filled`、`cancelled`
 <ResponseField name="postOnly" type="boolean">是否为 Post-Only 模式</ResponseField>
 <ResponseField name="expiration" type="number">到期时间（Unix 秒），仅 GTD 订单有此字段</ResponseField>
 <ResponseField name="createdAt" type="string">创建时间（ISO 8601）</ResponseField>
@@ -53,13 +53,13 @@ curl "https://api.senal.market/v1/mm/orders/order_01HXYZ001" \
   "id": "order_01HXYZ001",
   "marketId": "market_001",
   "tokenId": "0xabc123def456",
-  "side": "BUY",
+  "side": "buy",
   "orderType": "GTC",
   "price": "0.6400",
   "size": "200",
   "filledSize": "50",
   "remainingSize": "150",
-  "status": "PARTIALLY_FILLED",
+  "status": "partially_filled",
   "postOnly": false,
   "createdAt": "2025-01-01T00:00:00.000Z",
   "updatedAt": "2025-01-01T00:05:00.000Z"
