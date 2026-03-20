@@ -38,7 +38,7 @@ description: "orderbook:<tokenId> — 实时订单簿快照推送"
       { "price": "0.6600", "size": "300" },
       { "price": "0.6700", "size": "800" }
     ],
-    "timestamp": "1735689600000"
+    "timestamp": "2025-01-01T00:00:00.000Z"
   }
 }
 ```
@@ -54,7 +54,7 @@ description: "orderbook:<tokenId> — 实时订单簿快照推送"
 | `asks` | array | 卖单列表，按价格升序 |
 | `asks[].price` | string | 卖出价格 |
 | `asks[].size` | string | 卖出数量 |
-| `timestamp` | string | 快照时间戳（毫秒） |
+| `timestamp` | string | 快照时间（ISO 8601） |
 
 ## 取消订阅
 

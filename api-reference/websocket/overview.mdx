@@ -6,7 +6,7 @@ description: "WebSocket 连接、认证、订阅与连接维护"
 ## 连接地址
 
 ```
-wss://api.senal.market/v1/mm/ws
+wss://senalback.xyz/v1/mm/ws
 ```
 
 每个 API Key 最多允许 **5 个并发连接**。
@@ -132,7 +132,7 @@ ws.send(JSON.stringify({
 
 ```typescript
 function connectWithRetry(delay = 1000) {
-  const ws = new WebSocket('wss://api.senal.market/v1/mm/ws');
+  const ws = new WebSocket('wss://senalback.xyz/v1/mm/ws');
 
   ws.on('open', () => {
     // 1. 发送认证

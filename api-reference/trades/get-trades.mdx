@@ -55,12 +55,12 @@ description: "查询成交记录，仅返回 Maker 侧成交，支持 cursor 分
     <ResponseField name="id" type="string">成交 ID</ResponseField>
     <ResponseField name="marketId" type="string">市场 ID</ResponseField>
     <ResponseField name="tokenId" type="string">Token ID</ResponseField>
-    <ResponseField name="side" type="string">做市商挂单方向：`buy` 或 `sell`</ResponseField>
+    <ResponseField name="side" type="string">做市商挂单方向：`BUY` 或 `SELL`</ResponseField>
     <ResponseField name="price" type="string">成交价格</ResponseField>
     <ResponseField name="size" type="string">成交数量</ResponseField>
     <ResponseField name="orderId" type="string">对应的订单 ID</ResponseField>
     <ResponseField name="status" type="string">成交状态：`confirmed`、`pending`</ResponseField>
-    <ResponseField name="createdAt" type="string">成交时间（ISO 8601）</ResponseField>
+    <ResponseField name="createdAt" type="number">成交时间（Unix 秒）</ResponseField>
   </Expandable>
 </ResponseField>
 
@@ -68,7 +68,7 @@ description: "查询成交记录，仅返回 Maker 侧成交，支持 cursor 分
 
 ```bash
 # 首次查询
-curl "https://api.senal.market/v1/mm/trades?limit=100" \
+curl "https://senalback.xyz/v1/mm/trades?limit=100" \
   -H "SENAL-API-KEY: your_api_key" \
   -H "SENAL-SIGNATURE: your_signature" \
   -H "SENAL-TIMESTAMP: 1735689600000" \
@@ -76,7 +76,7 @@ curl "https://api.senal.market/v1/mm/trades?limit=100" \
   -H "SENAL-PASSPHRASE: your_passphrase"
 
 # 翻页
-curl "https://api.senal.market/v1/mm/trades?limit=100&cursor=eyJpZCI6MTAwfQ==" \
+curl "https://senalback.xyz/v1/mm/trades?limit=100&cursor=eyJpZCI6MTAwfQ==" \
   -H "SENAL-API-KEY: your_api_key" \
   ...
 ```
@@ -93,12 +93,12 @@ curl "https://api.senal.market/v1/mm/trades?limit=100&cursor=eyJpZCI6MTAwfQ==" \
       "id": "trade_01HABC001",
       "marketId": "market_001",
       "tokenId": "0xabc123def456",
-      "side": "buy",
+      "side": "BUY",
       "price": "0.6500",
       "size": "50",
       "orderId": "order_01HXYZ001",
       "status": "confirmed",
-      "createdAt": "2025-01-01T00:05:00.000Z"
+      "createdAt": 1735689900
     }
   ]
 }

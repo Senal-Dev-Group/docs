@@ -19,7 +19,7 @@ description: "查询订单列表，支持按市场和状态过滤"
 </ParamField>
 
 <ParamField query="status" type="string">
-  按订单状态过滤：`open`、`filled`、`partially_filled`、`cancelled`
+  按订单状态过滤：`open`、`filled`、`cancelled`、`expired`
 </ParamField>
 
 <ParamField query="page" type="number">
@@ -39,7 +39,7 @@ description: "查询订单列表，支持按市场和状态过滤"
     <ResponseField name="id" type="string">订单 ID</ResponseField>
     <ResponseField name="marketId" type="string">市场 ID</ResponseField>
     <ResponseField name="tokenId" type="string">Token ID</ResponseField>
-    <ResponseField name="side" type="string">`buy` 或 `sell`</ResponseField>
+    <ResponseField name="side" type="string">`BUY` 或 `SELL`</ResponseField>
     <ResponseField name="orderType" type="string">订单类型</ResponseField>
     <ResponseField name="price" type="string">限价</ResponseField>
     <ResponseField name="size" type="string">原始数量</ResponseField>
@@ -68,7 +68,7 @@ description: "查询订单列表，支持按市场和状态过滤"
 ## 请求示例
 
 ```bash
-curl "https://api.senal.market/v1/mm/orders?status=open&page=1&pageSize=20" \
+curl "https://senalback.xyz/v1/mm/orders?status=open&page=1&pageSize=20" \
   -H "SENAL-API-KEY: your_api_key" \
   -H "SENAL-SIGNATURE: your_signature" \
   -H "SENAL-TIMESTAMP: 1735689600000" \
@@ -85,7 +85,7 @@ curl "https://api.senal.market/v1/mm/orders?status=open&page=1&pageSize=20" \
       "id": "order_01HXYZ001",
       "marketId": "market_001",
       "tokenId": "0xabc123def456",
-      "side": "buy",
+      "side": "BUY",
       "orderType": "GTC",
       "price": "0.6400",
       "size": "200",

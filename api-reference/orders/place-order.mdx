@@ -17,16 +17,16 @@ description: "提交单笔订单"
 
 ### Request Body
 
-<ParamField body="marketID" type="string" required>
+<ParamField body="marketId" type="string" required>
   市场 ID
 </ParamField>
 
-<ParamField body="tokenID" type="string" required>
+<ParamField body="tokenId" type="string" required>
   Outcome Token ID
 </ParamField>
 
 <ParamField body="side" type="string" required>
-  `buy` 或 `sell`
+  `BUY` 或 `SELL`
 </ParamField>
 
 <ParamField body="orderType" type="string" required>
@@ -73,9 +73,9 @@ description: "提交单笔订单"
 <CodeGroup>
 ```json Request
 {
-  "marketID": "mkt_2jk8f9a3b",
-  "tokenID": "out_yes_2jk8f9a3b",
-  "side": "buy",
+  "marketId": "mkt_2jk8f9a3b",
+  "tokenId": "out_yes_2jk8f9a3b",
+  "side": "BUY",
   "orderType": "GTC",
   "price": 0.55,
   "size": 100

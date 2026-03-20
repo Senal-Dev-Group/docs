@@ -23,7 +23,7 @@ description: "查询单笔订单详情"
 <ResponseField name="id" type="string">订单 ID</ResponseField>
 <ResponseField name="marketId" type="string">市场 ID</ResponseField>
 <ResponseField name="tokenId" type="string">Token ID</ResponseField>
-<ResponseField name="side" type="string">`buy` 或 `sell`</ResponseField>
+<ResponseField name="side" type="string">`BUY` 或 `SELL`</ResponseField>
 <ResponseField name="orderType" type="string">订单类型：`GTC`、`GTD`、`FOK`、`FAK`</ResponseField>
 <ResponseField name="price" type="string">限价</ResponseField>
 <ResponseField name="size" type="string">原始数量</ResponseField>
@@ -38,7 +38,7 @@ description: "查询单笔订单详情"
 ## 请求示例
 
 ```bash
-curl "https://api.senal.market/v1/mm/orders/order_01HXYZ001" \
+curl "https://senalback.xyz/v1/mm/orders/order_01HXYZ001" \
   -H "SENAL-API-KEY: your_api_key" \
   -H "SENAL-SIGNATURE: your_signature" \
   -H "SENAL-TIMESTAMP: 1735689600000" \
@@ -53,7 +53,7 @@ curl "https://api.senal.market/v1/mm/orders/order_01HXYZ001" \
   "id": "order_01HXYZ001",
   "marketId": "market_001",
   "tokenId": "0xabc123def456",
-  "side": "buy",
+  "side": "BUY",
   "orderType": "GTC",
   "price": "0.6400",
   "size": "200",

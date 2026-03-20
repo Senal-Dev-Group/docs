@@ -33,7 +33,7 @@ description: "orders — 订单状态变更实时推送（私有）"
     "status": "partially_filled",
     "filledSize": "50",
     "remainingSize": "50",
-    "updatedAt": "1735689600000"
+    "updatedAt": "2025-01-01T00:00:00.000Z"
   }
 }
 ```
@@ -46,7 +46,7 @@ description: "orders — 订单状态变更实时推送（私有）"
 | `status` | string | 订单状态：`open`、`partially_filled`、`filled`、`cancelled` |
 | `filledSize` | string | 已成交数量 |
 | `remainingSize` | string | 剩余未成交数量 |
-| `updatedAt` | string | 更新时间戳（毫秒） |
+| `updatedAt` | string | 更新时间（ISO 8601） |
 
 ## 取消订阅
 

@@ -27,7 +27,7 @@ description: "发送心跳，维持挂单活跃状态"
 ## 请求示例
 
 ```bash
-curl -X POST https://api.senal.market/v1/mm/heartbeats \
+curl -X POST https://senalback.xyz/v1/mm/heartbeats \
   -H "SENAL-API-KEY: your_api_key" \
   -H "SENAL-SIGNATURE: your_signature" \
   -H "SENAL-TIMESTAMP: 1735689600000" \
@@ -49,7 +49,7 @@ curl -X POST https://api.senal.market/v1/mm/heartbeats \
 
 ```typescript
 setInterval(async () => {
-  await fetch('https://api.senal.market/v1/mm/heartbeats', {
+  await fetch('https://senalback.xyz/v1/mm/heartbeats', {
     method: 'POST',
     headers: buildL2Headers('POST', '/v1/mm/heartbeats', ''),
   });

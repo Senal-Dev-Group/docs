@@ -20,9 +20,9 @@ description: "原子批量下单，最多 15 笔"
   订单列表，最多 **15** 笔。每个元素与 [Place Order](/api-reference/orders/place-order) 的请求体格式相同。
 
   <Expandable title="order 对象">
-    <ParamField body="marketID" type="string" required>市场 ID</ParamField>
-    <ParamField body="tokenID" type="string" required>Token ID</ParamField>
-    <ParamField body="side" type="string" required>`buy` 或 `sell`</ParamField>
+    <ParamField body="marketId" type="string" required>市场 ID</ParamField>
+    <ParamField body="tokenId" type="string" required>Token ID</ParamField>
+    <ParamField body="side" type="string" required>`BUY` 或 `SELL`</ParamField>
     <ParamField body="orderType" type="string" required>`GTC`、`GTD`、`FOK` 或 `FAK`</ParamField>
     <ParamField body="price" type="string" required>限价，精度 0.0001，范围 0.0001–0.9999</ParamField>
     <ParamField body="size" type="string" required>数量（整数），最小 1</ParamField>
@@ -56,7 +56,7 @@ description: "原子批量下单，最多 15 笔"
 ## 请求示例
 
 ```bash
-curl -X POST https://api.senal.market/v1/mm/orders/batch \
+curl -X POST https://senalback.xyz/v1/mm/orders/batch \
   -H "Content-Type: application/json" \
   -H "SENAL-API-KEY: your_api_key" \
   -H "SENAL-SIGNATURE: your_signature" \
@@ -66,17 +66,17 @@ curl -X POST https://api.senal.market/v1/mm/orders/batch \
   -d '{
     "orders": [
       {
-        "marketID": "market_001",
-        "tokenID": "0xabc123def456",
-        "side": "buy",
+        "marketId": "market_001",
+        "tokenId": "0xabc123def456",
+        "side": "BUY",
         "orderType": "GTC",
         "price": "0.6400",
         "size": "200"
       },
       {
-        "marketID": "market_001",
-        "tokenID": "0xabc123def456",
-        "side": "sell",
+        "marketId": "market_001",
+        "tokenId": "0xabc123def456",
+        "side": "SELL",
         "orderType": "GTC",
         "price": "0.6600",
         "size": "200"

@@ -32,7 +32,7 @@ description: "查询指定 Token 的持仓详情"
 ## 请求示例
 
 ```bash
-curl "https://api.senal.market/v1/mm/positions/0xabc123def456" \
+curl "https://senalback.xyz/v1/mm/positions/0xabc123def456" \
   -H "SENAL-API-KEY: your_api_key" \
   -H "SENAL-SIGNATURE: your_signature" \
   -H "SENAL-TIMESTAMP: 1735689600000" \
@@ -55,12 +55,11 @@ curl "https://api.senal.market/v1/mm/positions/0xabc123def456" \
 }
 ```
 
-无持仓时返回 HTTP 200，响应体为空字符串（非 JSON）：
+无持仓时返回 HTTP 404：
 
+```json
+{
+  "statusCode": 404,
+  "message": "Position not found"
+}
 ```
-（空响应体）
-```
-
-<Warning>
-  无持仓时返回的不是 JSON，客户端解析前应先检查响应体是否为空。
-</Warning>

@@ -100,7 +100,7 @@ def build_headers(api_key, api_secret, passphrase, method, path, body=""):
 ```typescript TypeScript
 import axios from 'axios';
 
-const BASE_URL = 'https://api.senal.market/v1';
+const BASE_URL = 'https://senalback.xyz/v1';
 const API_KEY = 'your-api-key';
 const API_SECRET = 'your-api-secret';
 const PASSPHRASE = 'your-passphrase';
@@ -108,9 +108,9 @@ const PASSPHRASE = 'your-passphrase';
 async function placeOrder() {
   const path = '/v1/mm/orders';
   const body = JSON.stringify({
-    marketID: 'mkt_xxx',
-    tokenID: 'out_xxx',
-    side: 'buy',
+    marketId: 'mkt_xxx',
+    tokenId: 'out_xxx',
+    side: 'BUY',
     orderType: 'GTC',
     price: 0.55,
     size: 100,
@@ -128,7 +128,7 @@ placeOrder();
 import requests
 import json
 
-BASE_URL = "https://api.senal.market/v1"
+BASE_URL = "https://senalback.xyz/v1"
 API_KEY = "your-api-key"
 API_SECRET = "your-api-secret"
 PASSPHRASE = "your-passphrase"
@@ -136,9 +136,9 @@ PASSPHRASE = "your-passphrase"
 def place_order():
     path = "/v1/mm/orders"
     body = json.dumps({
-        "marketID": "mkt_xxx",
-        "tokenID": "out_xxx",
-        "side": "buy",
+        "marketId": "mkt_xxx",
+        "tokenId": "out_xxx",
+        "side": "BUY",
         "orderType": "GTC",
         "price": 0.55,
         "size": 100,
